@@ -14,23 +14,24 @@ when "rhel", "fedora"
       action :install
     end
   end
-  php_pear "apc" do
-    action :install
-    directives(:shm_size => "128M", :enable_cli => 0)
-  end
   %w{ imagick }.each do |pkg|
     php_pear pkg do
       action :install
     end
   end
 when "debian"
-  %w{ make php5-imagick php-apc php-mysql php-mysqli  }.each do |pkg|
+  %w{ make php5-imagick php5-mysqlnd libpcre3 libpcre3-dev git-core }.each do |pkg|
     package pkg do
       action :install
     end
   end
 end
 
+#install apc via pecl due to being able to set ini conf easily
+php_pear "apc" do
+  action :install
+  directives(:shm_size => node['php']['apc']['shm_size'], :enable_cli => 0, :stat => node['php']['apc']['stat'], :enable => node['php']['apc']['enable'])
+end
 # install the uploadprogress pecl
 php_pear "uploadprogress" do
   action :install

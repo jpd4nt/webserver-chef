@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-define :bpa_vhost, :template => "vhost.conf.erb", :enable => true do
+define :webserver_chef_vhost, :template => "vhost.conf.erb", :enable => true do
   
   application_name = params[:name]
 
