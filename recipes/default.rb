@@ -26,7 +26,7 @@ when "rhel", "fedora"
     #directives(:shm_size => node['php']['apc']['shm_size'], :enable_cli => 0, :stat => node['php']['apc']['stat'], :enable => node['php']['apc']['enable'])
   end
 when "debian"
-  %w{ make php5-imagick php5-mysqlnd php5-gd libpcre3 libpcre3-dev git-core php-apc }.each do |pkg|
+  %w{ make php5-imagick php5-mysqlnd php5-gd php5-curl libpcre3 libpcre3-dev git-core php-apc }.each do |pkg|
     package pkg do
       action :install
     end

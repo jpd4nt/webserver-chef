@@ -19,8 +19,14 @@ when "rhel", "fedora"
       action :install
     end
   end
+  php_pear "apc" do
+    version         "3.1.9"
+    action          :install
+    preferred_state "stable"
+    #directives(:shm_size => node['php']['apc']['shm_size'], :enable_cli => 0, :stat => node['php']['apc']['stat'], :enable => node['php']['apc']['enable'])
+  end
 when "debian"
-  %w{ make php5-imagick php5-mysqlnd php5-gd libpcre3 libpcre3-dev git-core }.each do |pkg|
+  %w{ make php5-imagick php5-mysqlnd php5-gd libpcre3 libpcre3-dev git-core php-apc }.each do |pkg|
     package pkg do
       action :install
     end
@@ -28,12 +34,19 @@ when "debian"
 end
 
 #install apc via pecl due to being able to set ini conf easily
-php_pear "apc" do
-  version         "3.1.9"
-  action          :install
-  preferred_state "stable"
-  directives(:shm_size => node['php']['apc']['shm_size'], :enable_cli => 0, :stat => node['php']['apc']['stat'], :enable => node['php']['apc']['enable'])
+template "/etc/php5/conf.d/apc.ini" do
+  source "apc.ini.erb"
+  owner  node['apache']['user']
+  group  node['apache']['group']
+  mode   "0444"
+  variables({
+    :shm_size => node['php']['apc']['shm_size'],
+    :enable_cli => 0,
+    :stat => node['php']['apc']['stat'],
+    :enable => node['php']['apc']['enable']
+  })
 end
+
 directory "/var/www/monitor" do
   action    :create
   mode      "0775"
