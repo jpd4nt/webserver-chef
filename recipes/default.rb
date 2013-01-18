@@ -8,8 +8,8 @@
 #
 
 case node['platform_family']
-when "rhel", "fedora"
-  %w{ httpd-devel pcre pcre-devel }.each do |pkg|
+when "rhel", "fedora", "centos"
+  %w{ httpd-devel pcre pcre-devel php-mysqlnd php-pecl-apc php-gd php-xml php-mbstring php-mcrypt ImageMagick-devel }.each do |pkg|
     package pkg do
       action :install
     end
@@ -18,12 +18,6 @@ when "rhel", "fedora"
     php_pear pkg do
       action :install
     end
-  end
-  php_pear "apc" do
-    version         "3.1.9"
-    action          :install
-    preferred_state "stable"
-    #directives(:shm_size => node['php']['apc']['shm_size'], :enable_cli => 0, :stat => node['php']['apc']['stat'], :enable => node['php']['apc']['enable'])
   end
 when "debian"
   %w{ make php5-imagick php5-mysqlnd php5-gd php5-curl libpcre3 libpcre3-dev git-core php-apc }.each do |pkg|
