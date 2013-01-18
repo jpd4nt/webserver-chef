@@ -19,16 +19,20 @@ when "rhel", "fedora", "centos"
       action :install
     end
   end
+  apc_path = "/etc/php.d/apc.ini"
 when "debian"
   %w{ make php5-imagick php5-mysqlnd php5-gd php5-curl libpcre3 libpcre3-dev git-core php-apc }.each do |pkg|
     package pkg do
       action :install
     end
   end
+  apc_path = "/etc/php5/conf.d/apc.ini"
+else
+  apc_path = "/etc/php5/conf.d/apc.ini"
 end
 
 #install apc via pecl due to being able to set ini conf easily
-template "/etc/php5/conf.d/apc.ini" do
+template apc_path do
   source "apc.ini.erb"
   owner  node['apache']['user']
   group  node['apache']['group']
