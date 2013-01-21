@@ -17,7 +17,7 @@ when "rhel", "fedora", "centos"
   case node['platform']
   when "amazon"
     %w{ php-mysqlnd php-mcrypt }.each do |pkg|
-      package 'php-mysqlnd' do
+      package pkg do
 	action :install
       end
     end
@@ -26,10 +26,8 @@ when "rhel", "fedora", "centos"
       action :install
     end
   end
-  %w{ imagick }.each do |pkg|
-    php_pear pkg do
-      action :install
-    end
+  php_pear 'imagick' do
+    action :install
   end
   apc_path = "/etc/php.d/apc.ini"
 when "debian"
