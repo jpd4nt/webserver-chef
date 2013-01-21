@@ -10,4 +10,5 @@
 # install the xhprof pecl
 php_pear "mongo" do
   action :install
+  notifies :restart, "service[apache]", :delayed
 end
