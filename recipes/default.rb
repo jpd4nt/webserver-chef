@@ -43,7 +43,7 @@ template apc_path do
     :stat => node['php']['apc']['stat'],
     :enable => node['php']['apc']['enable']
   })
-  notifies :restart, "service[apache]", :delayed
+  notifies :restart, "service[apache2]", :delayed
 end
 
 directory "/var/www/monitor" do
@@ -61,10 +61,10 @@ end
 # install the uploadprogress pecl
 php_pear "uploadprogress" do
   action :install
-  notifies :restart, "service[apache]", :delayed
+  notifies :restart, "service[apache2]", :delayed
 end
 # install the xhprof pecl
 php_pear "xhprof" do
   action :install
-  notifies :restart, "service[apache]", :delayed
+  notifies :restart, "service[apache2]", :delayed
 end
