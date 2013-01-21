@@ -9,7 +9,7 @@
 
 case node['platform_family']
 when "rhel", "fedora", "centos"
-  %w{ httpd-devel pcre pcre-devel php-mysqlnd php-pecl-apc php-gd php-xml php-mbstring php-mcrypt ImageMagick-devel git }.each do |pkg|
+  %w{ httpd-devel pcre pcre-devel php-mysql php-pecl-apc php-gd php-xml php-mbstring php-mcrypt ImageMagick-devel git }.each do |pkg|
     package pkg do
       action :install
     end
