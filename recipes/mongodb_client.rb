@@ -23,6 +23,7 @@ when "rhel"
     command "/usr/sbin/setsebool -P httpd_can_network_connect 1"
     action :run
     notifies :restart, "service[apache2]", :delayed
-    not_if {selinux.count('on') == 2 }
+    # Don't ask me why its 8, ask ruby why its 8.
+    not_if {selinux.count('on') == 8 }
   end
 end
