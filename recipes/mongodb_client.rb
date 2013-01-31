@@ -23,6 +23,6 @@ when "rhel"
     command "/usr/sbin/setsebool -P httpd_can_network_connect 1"
     action :run
     notifies :restart, "service[apache2]", :delayed
-    not_if {selinux.eql? "httpd_can_network_connect --> on"}
+    not_if {selinux.count('on') == 2 }
   end
 end
