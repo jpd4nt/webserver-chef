@@ -7,12 +7,21 @@
 # All rights reserved - Do Not Redistribute
 #
 
+
 case node['platform_family']
 when "rhel", "fedora", "centos"
   %w{ httpd-devel pcre pcre-devel php-pecl-apc php-gd php-xml php-mbstring ImageMagick-devel git }.each do |pkg|
     package pkg do
       action :install
     end
+  end
+  # enable apache access to sendmail on rhel.
+  selinux = `/usr/sbin/getsebool httpd_can_sendmail`
+  execute "selinx_http" do
+    command "/usr/sbin/setsebool -P httpd_can_sendmail 1"
+    action :run
+    # Don't ask me why its 4, ask ruby why its 4.
+    not_if {selinux.count('on') == 4 }
   end
   case node['platform']
   when "amazon"
