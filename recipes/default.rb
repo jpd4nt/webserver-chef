@@ -83,7 +83,8 @@ php_pear "uploadprogress" do
   notifies :restart, "service[apache2]", :delayed
 end
 # install the xhprof pecl
-php_pear "channel://pecl.php.net/xhprof-0.9.2" do
+php_pear "xhprof" do
   action :install
+  preferred_state "beta"
   notifies :restart, "service[apache2]", :delayed
 end
