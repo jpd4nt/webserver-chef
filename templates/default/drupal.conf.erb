@@ -1,0 +1,76 @@
+<VirtualHost *:<%= @params[:port] %>>
+  ServerName <%= @params[:server_name] %>
+  ServerAlias <% @params[:server_aliases].each do |a| %><%= "#{a}" %> <% end %>
+  DocumentRoot <%= @params[:docroot] %>
+  RewriteEngine On
+  
+  <Directory "<%= @params[:docroot] %>">
+    Options Indexes FollowSymLinks MultiViews 
+    AllowOverride All 
+    Order allow,deny
+    Allow from all 
+    Deny from none 
+    FileETag MTime Size
+    <IfModule mod_expires.c>
+      ExpiresActive On
+      ExpiresDefault "access plus 1 week"
+      ExpiresByType text/html "access plus 1 week"
+      ExpiresByType text/css "access plus 1 week"
+      ExpiresByType text/javascript "access plus 1 week"
+      ExpiresByType image/gif "access plus 1 month"
+      ExpiresByType image/jpg "access plus 1 month"
+      ExpiresByType image/png "access plus 1 month"
+      ExpiresByType application/font-woff "access plus 1 month"
+    </IfModule>
+  </Directory>
+  <Location /admin>
+        Order Deny,Allow
+        Deny from all
+        Allow from 127.0.0.1 localhost <% @params[:admin_block].each do |a| %><%= "#{a}" %> <% end %>
+  </Location>
+  <Location /user>
+        Order Deny,Allow
+        Deny from all
+        Allow from 127.0.0.1 localhost <% @params[:user_block].each do |a| %><%= "#{a}" %> <% end %>
+  </Location>
+
+  LogLevel info
+  <% if @params[:proxy] == true -%>
+  LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+  LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" proxy
+  SetEnvIf X-Forwarded-For "^.*\..*\..*\..*" forwarded
+  CustomLog <%= node['apache']['log_dir'] %>/<%= @params[:name] %>-access.log combined env=!forwarded
+  CustomLog <%= node['apache']['log_dir'] %>/<%= @params[:name] %>-access.log proxy env=forwarded
+  <% end -%>
+  <% if @params[:proxy] == false -%>
+  CustomLog <%= node['apache']['log_dir'] %>/<%= @params[:name] %>-access.log combined
+  <% end -%>
+  ErrorLog <%= node['apache']['log_dir'] %>/<%= @params[:name] %>-error.log
+
+  RewriteEngine On
+  RewriteLog /var/log/apache2/bpa-rewrite.log
+  RewriteLogLevel 0
+
+  # Canonical host, blackplaysarchive.org.uk
+  RewriteCond %{HTTP_HOST}   ^<%= @params[:server_name] %> [NC]
+  RewriteCond %{HTTP_HOST}   !^$
+  RewriteRule ^/(.*)$        http://www.<%= @params[:server_name] %>/$1 [L,R=301]
+
+  RewriteCond %{HTTP_HOST} !^cms\.(.+)$ [NC]
+  RewriteCond %{QUERY_STRING} q=/?user [NC]
+  RewriteRule ^(.*) - [F]
+
+  Header unset X-Powered-By
+  Header unset X-Generator
+  Header unset Server
+
+  <FilesMatch "(install\.php|authorize\.php|update\.php)">
+    Order allow,deny
+    Deny from all
+  </FilesMatch>
+  <FilesMatch "(?!^robots\.txt$)^.*\.txt$">
+    Order allow,deny
+    Deny from all
+  </FilesMatch>
+
+</VirtualHost>
