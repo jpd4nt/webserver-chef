@@ -15,7 +15,7 @@ end
 
 php_pear "mongo" do
   action :upgrade
-  version "1.3.7"
+  version node['php']['mongo']['version']
   notifies :restart, "service[apache2]", :delayed
 end
 
