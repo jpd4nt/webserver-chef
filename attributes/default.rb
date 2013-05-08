@@ -12,3 +12,5 @@ default['php']['apc']['shm_size'] = '32M'
 default['php']['apc']['stat']     = '1'
 default['php']['apc']['username'] = 'apc'
 default['php']['apc']['password'] = 'password1'
+
+default['php']['mongo']['version'] = '1.3.7'
