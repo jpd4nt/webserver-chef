@@ -13,6 +13,11 @@ php_pear "mongo" do
   notifies :restart, "service[apache2]", :delayed
 end
 
+php_pear "mongo" do
+  action :update
+  notifies :restart, "service[apache2]", :delayed
+end
+
 # This means that the socket could not be opened due to permissions issues.
 # On Red Hat variants, this can be caused by a default setting that does not
 # allow Apache to create network connections.
