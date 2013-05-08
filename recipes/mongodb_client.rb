@@ -14,7 +14,7 @@ php_pear "mongo" do
 end
 
 php_pear "mongo" do
-  action :update
+  action :upgrade
   notifies :restart, "service[apache2]", :delayed
 end
 
