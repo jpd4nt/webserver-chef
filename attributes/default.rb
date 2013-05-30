@@ -13,4 +13,4 @@ default['php']['apc']['stat']     = '1'
 default['php']['apc']['username'] = 'apc'
 default['php']['apc']['password'] = 'password1'
 
-default['php']['mongo']['version'] = '1.3.7'
+default['php']['mongo']['version'] = '1.4.0'
