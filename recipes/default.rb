@@ -22,15 +22,20 @@ when "rhel", "fedora", "centos"
 	action :install
       end
     end
-  else
+  when "rhel"
     # enable apache access to sendmail on rhel.
+    selinuxCheck = `/usr/sbin/getenforce`
     selinux = `/usr/sbin/getsebool httpd_can_sendmail`
     execute "selinx_http" do
       command "/usr/sbin/setsebool -P httpd_can_sendmail 1"
       action :run
       # Don't ask me why its 4, ask ruby why its 4.
-      not_if {selinux.count('on') == 4 }
+      not_if {selinux.count('on') == 4}
     end
+    package 'php-mysql' do
+      action :install
+    end
+  else
     package 'php-mysql' do
       action :install
     end
