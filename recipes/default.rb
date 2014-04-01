@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-apc_path = "/etc/php.d/apc.ini"
+apc_path = "#{default['php']['ext_conf_dir']}/apc.ini"
 case node['platform_family']
 when "rhel", "fedora", "centos"
   %w{ httpd-devel pcre pcre-devel ImageMagick-devel git }.each do |pkg|
@@ -26,7 +26,6 @@ when "rhel", "fedora", "centos"
       # Don't ask me why its 4, ask ruby why its 4.
       not_if {selinux.count('on') == 4}
     end
-    apc_path = "/opt/rh/php54/root/etc/php.d/apc.ini"
   else
     php_pear 'apcu' do
       action :install
@@ -43,9 +42,6 @@ when "debian"
       action :install
     end
   end
-  apc_path = "/etc/php5/conf.d/apc.ini"
-else
-  apc_path = "/etc/php5/conf.d/apc.ini"
 end
 
 #install apc via pecl due to being able to set ini conf easily
