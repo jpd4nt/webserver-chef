@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-apc_path = "#{default['php']['ext_conf_dir']}/apc.ini"
+apc_path = "#{node['php']['ext_conf_dir']}/apc.ini"
 case node['platform_family']
 when "rhel", "fedora", "centos"
   %w{ httpd-devel pcre pcre-devel ImageMagick-devel git }.each do |pkg|
