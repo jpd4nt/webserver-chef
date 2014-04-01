@@ -7,21 +7,15 @@
 # All rights reserved - Do Not Redistribute
 #
 
-
+apc_path = "/etc/php.d/apc.ini"
 case node['platform_family']
 when "rhel", "fedora", "centos"
-  %w{ httpd-devel pcre pcre-devel php-pecl-apc php-gd php-xml php-mbstring ImageMagick-devel git }.each do |pkg|
+  %w{ httpd-devel pcre pcre-devel ImageMagick-devel git }.each do |pkg|
     package pkg do
       action :install
     end
   end
   case node['platform']
-  when "amazon"
-    %w{ php-mysqlnd php-mcrypt }.each do |pkg|
-      package pkg do
-	action :install
-      end
-    end
   when "rhel"
     # enable apache access to sendmail on rhel.
     selinuxCheck = `/usr/sbin/getenforce`
@@ -32,18 +26,17 @@ when "rhel", "fedora", "centos"
       # Don't ask me why its 4, ask ruby why its 4.
       not_if {selinux.count('on') == 4}
     end
-    package 'php-mysql' do
-      action :install
-    end
+    apc_path = "/opt/rh/php54/root/etc/php.d/apc.ini"
   else
-    package 'php-mysql' do
+    php_pear 'apcu' do
       action :install
+      preferred_state "beta"
+      notifies :restart, "service[apache2]", :delayed
     end
   end
   php_pear 'imagick' do
     action :install
   end
-  apc_path = "/etc/php.d/apc.ini"
 when "debian"
   %w{ make php5-imagick php5-mysqlnd php5-gd php5-curl libpcre3 libpcre3-dev git-core php-apc }.each do |pkg|
     package pkg do
@@ -81,6 +74,12 @@ template "/var/www/monitor/apc.php" do
   owner  node['apache']['user']
   group  node['apache']['group']
   mode   "0444"
+end
+php_pear 'zendopcache' do
+  action :install
+  zend_extensions ['opcache.so']
+  preferred_state "beta"
+  notifies :restart, "service[apache2]", :delayed
 end
 # install the uploadprogress pecl
 php_pear "uploadprogress" do
