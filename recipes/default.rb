@@ -27,6 +27,7 @@ when "rhel", "fedora", "centos"
       not_if {selinux.count('on') == 4}
     end
   else
+    include_recipe "build-essential::default"
     php_pear 'apcu' do
       action :install
       preferred_state "beta"
@@ -45,6 +46,10 @@ when "debian"
 end
 
 #install apc via pecl due to being able to set ini conf easily
+file "#{node['php']['ext_conf_dir']}/apcu.ini" do
+  action :delete
+end
+
 template apc_path do
   source "apc.ini.erb"
   owner  node['apache']['user']
@@ -71,6 +76,7 @@ template "/var/www/monitor/apc.php" do
   group  node['apache']['group']
   mode   "0444"
 end
+include_recipe "build-essential::default"
 php_pear 'zendopcache' do
   action :install
   zend_extensions ['opcache.so']
