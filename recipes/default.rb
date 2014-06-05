@@ -15,6 +15,13 @@ when "rhel", "fedora", "centos"
       action :install
     end
   end
+  %w{ php pear pecl phpize phar php-config }.each do |phpcli|
+    link "/usr/bin/#{phpcli}" do
+      action :create
+      to "/opt/rh/php54/root/usr/bin/#{phpcli}"
+      not_if File.exists?("/usr/bin/#{phpcli}")
+    end
+  end
   case node['platform']
   when "rhel"
     # enable apache access to sendmail on rhel.
