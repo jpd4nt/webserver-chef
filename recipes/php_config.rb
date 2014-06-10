@@ -11,7 +11,7 @@ case node['platform_family']
 when "rhel", "fedora", "centos"
   case node['platform']
   when "amazon"
-  when "rhel"
+  when "redhat"
   else
     yum_repository 'rhscl-php54' do
       description "Copr repo for php54 owned by rhscl"

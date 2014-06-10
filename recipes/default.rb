@@ -10,23 +10,23 @@
 apc_path = "#{node['php']['ext_conf_dir']}/apc.ini"
 case node['platform_family']
 when "rhel", "fedora", "centos"
-  %w{ httpd-devel pcre pcre-devel ImageMagick-devel git }.each do |pkg|
+  %w{ httpd-devel pcre pcre-devel ImageMagick-devel git libcurl-devel }.each do |pkg|
     package pkg do
       action :install
     end
   end
-  case node['platform']
-  when "rhel"
-    # enable apache access to sendmail on rhel.
-    selinuxCheck = `/usr/sbin/getenforce`
-    selinux = `/usr/sbin/getsebool httpd_can_sendmail`
-    execute "selinx_http" do
-      command "/usr/sbin/setsebool -P httpd_can_sendmail 1"
-      action :run
-      # Don't ask me why its 4, ask ruby why its 4.
-      not_if {selinux.count('on') == 4}
+  %w{ php pear pecl phpize phar php-config }.each do |phpcli|
+    link "/usr/bin/#{phpcli}" do
+      action :create
+      to "/opt/rh/php54/root/usr/bin/#{phpcli}"
+      not_if {File.exists?("/usr/bin/#{phpcli}")}
     end
+  end
+  case node['platform']
+  when "redhat"
+    include_recipe "webserver-chef::_redhat"
   else
+    include_recipe "build-essential::default"
     php_pear 'apcu' do
       action :install
       preferred_state "beta"
@@ -45,6 +45,10 @@ when "debian"
 end
 
 #install apc via pecl due to being able to set ini conf easily
+file "#{node['php']['ext_conf_dir']}/apcu.ini" do
+  action :delete
+end
+
 template apc_path do
   source "apc.ini.erb"
   owner  node['apache']['user']
@@ -71,6 +75,7 @@ template "/var/www/monitor/apc.php" do
   group  node['apache']['group']
   mode   "0444"
 end
+include_recipe "build-essential::default"
 php_pear 'zendopcache' do
   action :install
   zend_extensions ['opcache.so']
@@ -88,3 +93,13 @@ php_pear "xhprof" do
   preferred_state "beta"
   notifies :restart, "service[apache2]", :delayed
 end
+# Install AWS memcached library
+cookbook_file "amazon-elasticache-cluster-client_php54.so" do
+  path "#{node['php']['ext_dir']}/amazon-elasticache-cluster-client.so"
+  action :create_if_missing
+end
+cookbook_file "memcached.ini" do
+  path "#{node['php']['ext_conf_dir']}/memcached.ini"
+  action :create_if_missing
+end
+

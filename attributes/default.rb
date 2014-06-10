@@ -13,7 +13,7 @@ default['php']['apc']['stat']     = '1'
 default['php']['apc']['username'] = 'apc'
 default['php']['apc']['password'] = 'password1'
 
-default['php']['mongo']['version'] = '1.4.0'
+default['php']['mongo']['version'] = '1.5.2'
 
 case node['platform_family']
 when "rhel", "fedora", "centos"
@@ -26,7 +26,7 @@ when "rhel", "fedora", "centos"
       dir env mime negotiation setenvif
     ]
     default['mysql']['server']['packages'] = %w[mysql-server]
-  when "rhel"
+  when "redhat"
     default['php']['packages'] = %w{ php54 php54-php php54-runtime php54-php-devel php54-php-cli php54-php-gd php54-php-mbstring php54-php-mysqlnd php54-php-pecl-apc php54-php-xml php54-php-soap php54-php-dba }
     default['php']['pear']         = '/opt/rh/php54/root/usr/bin/pear'
     default['php']['pecl']         = '/opt/rh/php54/root/usr/bin/pecl'
