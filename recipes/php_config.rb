@@ -12,7 +12,17 @@ when "rhel", "fedora", "centos"
   case node['platform']
   when "amazon"
   when "redhat"
+    %w{ php php-common }.each do |pkg|
+      package pkg do
+        action :remove
+      end
+    end
   else
+    %w{ php php-common }.each do |pkg|
+      package pkg do
+        action :remove
+      end
+    end
     yum_repository 'rhscl-php54' do
       description "Copr repo for php54 owned by rhscl"
       baseurl "http://copr-be.cloud.fedoraproject.org/results/rhscl/php54/epel-6-$basearch/"

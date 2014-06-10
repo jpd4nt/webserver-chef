@@ -31,3 +31,7 @@ execute "selinux_newrelic" do
   # Don't ask me why its 4, ask ruby why its 4.
   not_if {selinux.include? "newrelic-daemon"}
 end
+
+apache_site "default" do
+  enable true
+end

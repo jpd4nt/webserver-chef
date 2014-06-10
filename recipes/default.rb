@@ -7,6 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
+include_recipe "build-essential::default"
 apc_path = "#{node['php']['ext_conf_dir']}/apc.ini"
 case node['platform_family']
 when "rhel", "fedora", "centos"
@@ -26,12 +27,15 @@ when "rhel", "fedora", "centos"
   when "redhat"
     include_recipe "webserver-chef::_redhat"
   else
-    include_recipe "build-essential::default"
     php_pear 'apcu' do
       action :install
       preferred_state "beta"
       notifies :restart, "service[apache2]", :delayed
     end
+  end
+  # Fix that apache cookbook deletes ssl.conf which scalr needs
+  execute 'yum reinstall mod_ssl -y' do
+    not_if {File.exists?("/etc/httpd/conf.d/ssl.conf")}
   end
   php_pear 'imagick' do
     action :install
@@ -75,7 +79,6 @@ template "/var/www/monitor/apc.php" do
   group  node['apache']['group']
   mode   "0444"
 end
-include_recipe "build-essential::default"
 php_pear 'zendopcache' do
   action :install
   zend_extensions ['opcache.so']
