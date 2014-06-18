@@ -12,6 +12,7 @@ default['php']['apc']['shm_size'] = '512M'
 default['php']['apc']['stat']     = '1'
 default['php']['apc']['username'] = 'apc'
 default['php']['apc']['password'] = 'password1'
+default['php']['geos']['version'] = 'geos-3.4.2'
 
 default['php']['mongo']['version'] = '1.5.2'
 
