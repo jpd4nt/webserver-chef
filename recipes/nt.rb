@@ -27,7 +27,7 @@ when "redhat","centos"
   end
   packages = %w{ memcached php54-php-pecl-memcache php54-php-mcrypt }
 when "amazon"
-  packages = %w{ memcached php-pecl-memcache }
+  packages = %w{ memcached php-pecl-memcache php-mcrypt }
 end
 
 packages.each do |pkg|
