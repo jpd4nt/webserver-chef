@@ -16,6 +16,16 @@ script "selinux_http_sendmail" do
   code "/usr/sbin/setsebool -P httpd_can_sendmail 1"
   not_if "getsebool httpd_can_sendmail |egrep -q \" on\"$"
 end
+script "httpd_can_network_connect_db" do
+  interpreter "bash"
+  code "/usr/sbin/setsebool -P httpd_can_network_connect_db 1"
+  not_if "getsebool httpd_can_network_connect_db |egrep -q \" on\"$"
+end
+script "httpd_can_network_memcache" do
+  interpreter "bash"
+  code "/usr/sbin/setsebool -P httpd_can_network_memcache 1"
+  not_if "getsebool httpd_can_network_memcache |egrep -q \" on\"$"
+end
 
 cookbook_file "newrelic-daemon.pp" do
   path "/root/newrelic-daemon.pp"

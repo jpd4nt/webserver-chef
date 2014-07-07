@@ -16,3 +16,16 @@ php_pear "pecl_http" do
   version "1.7.6"
   notifies :restart, "service[apache2]", :delayed
 end
+
+case node['platform']
+when "redhat","centos"
+  packages = %w{ memcached php54-php-pecl-memcache }
+when "amazon"
+  packages = %w{ memcached php54-pecl-memcache }
+end
+
+packages.each do |pkg|
+  package pkg do
+    action :install
+  end
+end
