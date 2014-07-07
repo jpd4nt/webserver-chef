@@ -19,9 +19,15 @@ end
 
 case node['platform']
 when "redhat","centos"
-  packages = %w{ memcached php54-php-pecl-memcache }
+  yum_repository 'php54more' do
+    description "This collection extends the php54 collection available in RHSCL or CentsOS-SCL."
+    baseurl "https://www.softwarecollections.org/repos/remi/php54more/"
+    gpgcheck false
+    action :create
+  end
+  packages = %w{ memcached php54-php-pecl-memcache php54-php-mcrypt }
 when "amazon"
-  packages = %w{ memcached php54-pecl-memcache }
+  packages = %w{ memcached php-pecl-memcache }
 end
 
 packages.each do |pkg|
