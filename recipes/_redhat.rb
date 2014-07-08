@@ -39,6 +39,12 @@ execute "selinux_newrelic" do
   not_if {selinux.include? "newrelic-daemon"}
 end
 
+execute "selinux_folder" do
+  command "chcon -R -t httpd_sys_content_t /media"
+  action :run
+end
+
+
 apache_site "default" do
   enable true
 end
