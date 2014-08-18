@@ -13,6 +13,7 @@ default['php']['apc']['stat']     = '1'
 default['php']['apc']['username'] = 'apc'
 default['php']['apc']['password'] = 'password1'
 default['php']['geos']['version'] = 'geos-3.4.2'
+default['php']['version'] = 'php54' 
 
 default['php']['mongo']['version'] = '1.5.2'
 
@@ -20,7 +21,9 @@ case node['platform_family']
 when "rhel", "fedora", "centos"
   case node['platform']
   when "amazon"
-    default['php']['packages'] = %w{ php54 php54-devel php54-cli php54-gd php54-mbstring php54-mysqlnd php54-pecl-igbinary php54-xml php54-soap php54-dba php54-mcrypt }
+    default['php']['php54'] = %w{ php54 php54-devel php54-cli php54-gd php54-mbstring php54-mysqlnd php54-pecl-igbinary php54-xml php54-soap php54-dba php54-mcrypt }
+    default['php']['php55'] = %w{ php55 php55-devel php55-cli php55-gd php55-mbstring php55-mysqlnd php55-pecl-igbinary php55-xml php55-soap php55-dba php55-mcrypt }
+    default['php']['packages'] = node['php']['version']
     default['apache']['package'] = 'httpd24'
     default['apache']['default_modules'] = %w[
       status alias auth_basic authn_file authz_core authz_groupfile authz_host authz_user autoindex
@@ -28,7 +31,9 @@ when "rhel", "fedora", "centos"
     ]
     default['mysql']['server']['packages'] = %w[mysql-server]
   when "redhat"
-    default['php']['packages'] = %w{ php54 php54-php php54-runtime php54-php-devel php54-php-cli php54-php-gd php54-php-mbstring php54-php-mysqlnd php54-php-pecl-apc php54-php-xml php54-php-soap php54-php-dba }
+    default['php']['php54'] = %w{ php54 php54-php php54-runtime php54-php-devel php54-php-cli php54-php-gd php54-php-mbstring php54-php-mysqlnd php54-php-pecl-apc php54-php-xml php54-php-soap php54-php-dba }
+    default['php']['php55'] = %w{ php55 php55-php php55-runtime php55-php-devel php55-php-cli php55-php-gd php55-php-mbstring php55-php-mysqlnd php55-php-pecl-apc php55-php-xml php55-php-soap php55-php-dba php55-php-pecl-jsonc }
+    default['php']['packages'] = node['php']['version']
     default['php']['pear']         = '/opt/rh/php54/root/usr/bin/pear'
     default['php']['pecl']         = '/opt/rh/php54/root/usr/bin/pecl'
     default['php']['bin']          = '/opt/rh/php54/root/usr/bin/php'
