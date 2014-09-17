@@ -97,7 +97,15 @@ php_pear "xhprof" do
   notifies :restart, "service[apache2]", :delayed
 end
 # Install AWS memcached library
-cookbook_file "amazon-elasticache-cluster-client_php54.so" do
+case node['php']['version']
+when "php53"
+  amazon_elasticache = 'amazon-elasticache-cluster-client_php53.so'
+when "php54"
+  amazon_elasticache = 'amazon-elasticache-cluster-client_php54.so'
+when "php55"
+  amazon_elasticache = 'amazon-elasticache-cluster-client_php55.so'
+end
+cookbook_file amazon_elasticache do
   path "#{node['php']['ext_dir']}/amazon-elasticache-cluster-client.so"
   action :create_if_missing
 end

@@ -28,9 +28,9 @@ when 'rhel'
   package 'which'
 
   package 'php package' do
-    package_name 'php54'
+    package_name node['php']['version']
     notifies :run, 'execute[generate-module-list]', :immediately
-    not_if 'which /opt/rh/php54/root/usr/bin/php'
+    not_if "which /opt/rh/#{node['php']['version']}/root/usr/bin/php"
   end
 when 'fedora'
   package 'php package' do
