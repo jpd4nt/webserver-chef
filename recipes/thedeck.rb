@@ -28,7 +28,7 @@ execute "install-geoPHP" do
     rm -yr #{node['php']['geos']['version']}
     rm -y #{node['php']['geos']['version']}.tar.bz2
   EOF
-  not_if { ::File.exists?(node['php']['ext_dir'] . '/geos.so') }
+  not_if { ::File.exists?("#{node['php']['ext_dir']}/geos.so") }
 end
 
 cookbook_file "geos.ini" do
