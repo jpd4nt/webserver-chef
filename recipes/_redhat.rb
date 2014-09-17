@@ -57,3 +57,17 @@ when "php55"
     notifies :restart, "service[apache2]", :delayed
   end
 end
+
+template "#{node['php']['ext_conf_dir']}/apc.ini" do
+  source "apcu.ini.erb"
+  owner  node['apache']['user']
+  group  node['apache']['group']
+  mode   "0444"
+  variables({
+    :shm_size => node['php']['apc']['shm_size'],
+    :enable_cli => 0,
+    :enable => node['php']['apc']['enable']
+  })
+  notifies :restart, "service[apache2]", :delayed
+  only_if {File.exists?("#{node['php']['ext_dir']}/apcu.so")}
+end

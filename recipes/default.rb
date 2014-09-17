@@ -65,6 +65,7 @@ template apc_path do
     :enable => node['php']['apc']['enable']
   })
   notifies :restart, "service[apache2]", :delayed
+  not_if {File.exists?("#{node['php']['ext_dir']}/apcu.so")}
 end
 
 directory "/var/www/monitor" do
