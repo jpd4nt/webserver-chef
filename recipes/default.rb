@@ -19,7 +19,7 @@ when "rhel", "fedora", "centos"
   %w{ php pear pecl phpize phar php-config }.each do |phpcli|
     link "/usr/bin/#{phpcli}" do
       action :create
-      to "/opt/rh/php54/root/usr/bin/#{phpcli}"
+      to "/opt/rh/#{node['php']['version']}/root/usr/bin/#{phpcli}"
       not_if {File.exists?("/usr/bin/#{phpcli}")}
     end
   end

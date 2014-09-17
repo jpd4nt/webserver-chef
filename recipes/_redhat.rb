@@ -48,3 +48,12 @@ end
 apache_site "default" do
   enable true
 end
+
+case node['php']['version']
+when "php55"
+  php_pear 'apcu' do
+    action :install
+    preferred_state "beta"
+    notifies :restart, "service[apache2]", :delayed
+  end
+end
