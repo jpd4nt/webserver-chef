@@ -13,7 +13,7 @@ include_recipe "webserver-chef::default"
 remote_file "/tmp/#{node['php']['geos']['version']}.tar.bz2" do
   source "http://download.osgeo.org/geos/#{node['php']['geos']['version']}.tar.bz2"
   mode "0644"
-  not_if { ::File.exists?(node['php']['ext_dir'] . '/geos.so') }
+  not_if { ::File.exists?("#{node['php']['ext_dir']}/geos.so") }
 end
 
 execute "install-geoPHP" do
