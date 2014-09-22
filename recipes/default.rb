@@ -40,6 +40,11 @@ when "rhel", "fedora", "centos"
   php_pear 'imagick' do
     action :install
   end
+  cookbook_file 'scalr.conf' do
+    path '/etc/httpd/conf.d/scalr.conf'
+    action :create_if_missing
+    notifies :restart, "service[apache2]", :delayed
+  end
 when "debian"
   %w{ make php5-imagick php5-mysqlnd php5-gd php5-curl libpcre3 libpcre3-dev git-core php-apc }.each do |pkg|
     package pkg do
