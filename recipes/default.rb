@@ -33,6 +33,20 @@ when "rhel", "fedora", "centos"
       notifies :restart, "service[apache2]", :delayed
     end
   end
+  execute "yum reinstall #{node['php']['version']}-php -y" do
+    not_if {File.exists?("#{node['apache']['dir']}/conf.d/#{node['php']['version']}-php.conf")}
+  end
+  remote_file "Copy php settings file" do 
+    path "#{node['apache']['dir']}/conf-enabled/#{node['php']['version']}-php.conf" 
+    source "file://#{node['apache']['dir']}/conf.d/#{node['php']['version']}-php.conf"
+    owner 'root'
+    group 'root'
+    mode 0444
+    not_if {File.exists?("#{node['apache']['dir']}/conf.d/#{node['php']['version']}-php.conf")}
+    notifies :restart, "service[apache2]", :delayed
+  end
+  if File.exists?("#{node['apache']['dir']}/conf.d/#{node['php']['version']}-php.conf") do
+  end
   # Fix that apache cookbook deletes ssl.conf which scalr needs
   execute 'yum reinstall mod_ssl -y' do
     not_if {File.exists?("/etc/httpd/conf.d/ssl.conf")}
@@ -45,14 +59,11 @@ when "rhel", "fedora", "centos"
     action :create_if_missing
     notifies :restart, "service[apache2]", :delayed
   end
-  if File.exists?("#{node['apache']['dir']}/conf-available") do
+  if File.exists?("#{node['apache']['dir']}/conf-enabled") do
     cookbook_file 'scalr.conf' do
-      path '#{node['apache']['dir']}/conf-available/scalr.conf'
+      path '#{node['apache']['dir']}/conf-enabled/scalr.conf'
       action :create_if_missing
       notifies :restart, "service[apache2]", :delayed
-    end
-    apache_config 'scalr' do
-      enable true
     end
   end
 when "debian"
