@@ -45,8 +45,6 @@ when "rhel", "fedora", "centos"
     not_if {File.exists?("#{node['apache']['dir']}/conf.d/#{node['php']['version']}-php.conf")}
     notifies :restart, "service[apache2]", :delayed
   end
-  if File.exists?("#{node['apache']['dir']}/conf.d/#{node['php']['version']}-php.conf") do
-  end
   # Fix that apache cookbook deletes ssl.conf which scalr needs
   execute 'yum reinstall mod_ssl -y' do
     not_if {File.exists?("/etc/httpd/conf.d/ssl.conf")}
@@ -59,13 +57,14 @@ when "rhel", "fedora", "centos"
     action :create_if_missing
     notifies :restart, "service[apache2]", :delayed
   end
-  if File.exists?("#{node['apache']['dir']}/conf-enabled") do
+
     cookbook_file 'scalr.conf' do
       path "#{node['apache']['dir']}/conf-enabled/scalr.conf"
       action :create_if_missing
       notifies :restart, "service[apache2]", :delayed
+      only_if {File.exists?("#{node['apache']['dir']}/conf-enabled")}
     end
-  end
+
 when "debian"
   %w{ make php5-imagick php5-mysqlnd php5-gd php5-curl libpcre3 libpcre3-dev git-core php-apc }.each do |pkg|
     package pkg do
