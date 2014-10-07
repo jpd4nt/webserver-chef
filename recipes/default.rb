@@ -61,7 +61,7 @@ when "rhel", "fedora", "centos"
   end
   if File.exists?("#{node['apache']['dir']}/conf-enabled") do
     cookbook_file 'scalr.conf' do
-      path '#{node['apache']['dir']}/conf-enabled/scalr.conf'
+      path "#{node['apache']['dir']}/conf-enabled/scalr.conf"
       action :create_if_missing
       notifies :restart, "service[apache2]", :delayed
     end
