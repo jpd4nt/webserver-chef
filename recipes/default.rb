@@ -45,6 +45,16 @@ when "rhel", "fedora", "centos"
     action :create_if_missing
     notifies :restart, "service[apache2]", :delayed
   end
+  if File.exists?("#{node['apache']['dir']}/conf-available") do
+    cookbook_file 'scalr.conf' do
+      path '#{node['apache']['dir']}/conf-available/scalr.conf'
+      action :create_if_missing
+      notifies :restart, "service[apache2]", :delayed
+    end
+    apache_config 'scalr' do
+      enable true
+    end
+  end
 when "debian"
   %w{ make php5-imagick php5-mysqlnd php5-gd php5-curl libpcre3 libpcre3-dev git-core php-apc }.each do |pkg|
     package pkg do
