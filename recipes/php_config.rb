@@ -18,22 +18,38 @@ when "rhel", "fedora", "centos"
       end
     end
   else
-    %w{ php php-common }.each do |pkg|
-      package pkg do
-        action :remove
+    if node["platform_version"].to_f <= 6.0
+      %w{ php php-common }.each do |pkg|
+        package pkg do
+          action :remove
+        end
+      end
+      yum_repository "rhscl-#{node['php']['version']}" do
+        description "Copr repo for #{node['php']['version']} owned by rhscl"
+        baseurl "http://copr-be.cloud.fedoraproject.org/results/rhscl/#{node['php']['version']}/epel-6-$basearch/"
+        gpgcheck false
+        action :create
+      end
+      yum_repository "remi-#{node['php']['version']}more" do
+        description "Copr repo for #{node['php']['version']}more owned by remi"
+        baseurl "http://copr-be.cloud.fedoraproject.org/results/remi/#{node['php']['version']}more/epel-6-$basearch/"
+        gpgcheck false
+        action :create
+      end
+    else if node["platform_version"].to_f <= 7.0
+      yum_repository "rhscl-#{node['php']['version']}" do
+        description "Copr repo for #{node['php']['version']} owned by rhscl"
+        baseurl "http://copr-be.cloud.fedoraproject.org/results/rhscl/#{node['php']['version']}/epel-7-$basearch/"
+        gpgcheck false
+        action :create
+      end
+      yum_repository "remi-#{node['php']['version']}more" do
+        description "Copr repo for #{node['php']['version']}more owned by remi"
+        baseurl "http://copr-be.cloud.fedoraproject.org/results/remi/#{node['php']['version']}more/epel-7-$basearch/"
+        gpgcheck false
+        action :create
       end
     end
-    yum_repository 'rhscl-php54' do
-      description "Copr repo for php54 owned by rhscl"
-      baseurl "http://copr-be.cloud.fedoraproject.org/results/rhscl/php54/epel-6-$basearch/"
-      gpgcheck false
-      action :create
-    end
-    yum_repository 'remi-php54more' do
-      description "Copr repo for php54more owned by remi"
-      baseurl "http://copr-be.cloud.fedoraproject.org/results/remi/php54more/epel-6-$basearch/"
-      gpgcheck false
-      action :create
-    end
+    
   end
 end
